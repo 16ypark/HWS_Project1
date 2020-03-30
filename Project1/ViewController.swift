@@ -16,6 +16,7 @@ class ViewController: UITableViewController {
         
         var didInsert: Bool
         title = "Storm Viewer"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let fm = FileManager.default
@@ -59,6 +60,12 @@ class ViewController: UITableViewController {
             vc.pictures = pictures
             navigationController?.pushViewController(vc, animated: true)
         }
+    }
+    
+    @objc func shareTapped() {
+        let vc = UIActivityViewController(activityItems: ["Join Storm Viewer!"], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem // this only has effect on iPad
+        present(vc, animated: true)
     }
 }
 
