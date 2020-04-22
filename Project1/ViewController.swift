@@ -14,34 +14,39 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var didInsert: Bool
         title = "Storm Viewer"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        let fm = FileManager.default
-        let path = Bundle.main.resourcePath!
-        let items = try! fm.contentsOfDirectory(atPath: path)
-        
-        for item in items {
-            if item.hasPrefix("nssl") {
-                didInsert = false
-                // this is a picture to load!
-                for i in 0..<pictures.count {
-                    if item < pictures[i] {
-                        pictures.insert(item, at: i)
-                        didInsert = true
-                        break
+        DispatchQueue.global(qos: .background).async {
+            var didInsert: Bool
+            let fm = FileManager.default
+            let path = Bundle.main.resourcePath!
+            let items = try! fm.contentsOfDirectory(atPath: path)
+            
+            for item in items {
+                if item.hasPrefix("nssl") {
+                    didInsert = false
+                    // this is a picture to load!
+                    for i in 0..<self.pictures.count {
+                        if item < self.pictures[i] {
+                            self.pictures.insert(item, at: i)
+                            didInsert = true
+                            break
+                        }
                     }
+                    if !didInsert {
+                        self.pictures.append(item)
+                    }
+                    //pictures.append(item)
                 }
-                if !didInsert {
-                    pictures.append(item)
-                }
-                //pictures.append(item)
+            }
+            //pictures.sort()
+            print(self.pictures)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
         }
-        //pictures.sort()
-        print(pictures)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
